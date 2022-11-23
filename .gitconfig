@@ -1,0 +1,16 @@
+[safe]
+	directory = /mnt/d/Projects/ism-mvp
+	directory = /mnt/d/go/src/go.mozilla.org/sops
+	directory = /mnt/d/Projects/calendar-draw
+[user]
+	email = bernd@prager.ws
+	name = Bernd Prager
+[alias]
+	st = status
+	p = push
+	co = checkout
+	br = branch
+[core]
+	pager = 
+[init]
+	defaultBranch = main

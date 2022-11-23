@@ -1,0 +1,13 @@
+# The following lines were added by compinstall
+
+zstyle ':completion:*' completer _complete _ignored
+zstyle ':completion:*' completions 2
+zstyle ':completion:*' glob 2
+zstyle ':completion:*' max-errors 10 numeric
+zstyle ':completion:*' substitute 2
+zstyle ':completion:*' word true
+zstyle :compinstall filename '/home/bernd/.zshrc'
+
+autoload -Uz compinit
+compinit
+# End of lines added by compinstall
