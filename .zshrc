@@ -18,3 +18,9 @@ SAVEHIST=1000
 setopt autocd beep extendedglob nomatch notify
 bindkey -e
 # End of lines configured by zsh-newuser-install
+# Pure prompt
+ZSH_THEME=""
+fpath+=($HOME/.zsh/pure)
+autoload -U promptinit; promptinit
+prompt pure
+zstyle :prompt:pure:git:stash show yes
