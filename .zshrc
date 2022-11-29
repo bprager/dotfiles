@@ -6,6 +6,7 @@ zstyle ':completion:*' glob 2
 zstyle ':completion:*' max-errors 10 numeric
 zstyle ':completion:*' substitute 2
 zstyle ':completion:*' word true
+zstyle ':omz:update' mode auto
 zstyle :compinstall filename '/home/bernd/.zshrc'
 
 autoload -Uz compinit
