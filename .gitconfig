@@ -2,6 +2,25 @@
 	directory = /mnt/d/Projects/ism-mvp
 	directory = /mnt/d/go/src/go.mozilla.org/sops
 	directory = /mnt/d/Projects/calendar-draw
+	directory = /src/go.mozilla.org/sops
+	directory = /mnt/d/Projects/Python/attack-monitor
+	directory = /mnt/d/Projects/ism-mvp.bak
+	directory = /mnt/d/Projects/Python/sphinx-test
+	directory = /mnt/d/Projects/Python/version-dict
+	directory = /mnt/d/Projects/Vizio/chatgpt-pr-comment
+	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
+	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
+	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
+	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
+	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
+	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
+	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
+	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
+	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
+	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
+	directory = /home/bernd/Projects/EdisonIoT/vkryvolapovgoto-port
+	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
+	directory = /mnt/d/Projects/EdisonIoT/aws-iot-device-client
 [user]
 	email = bernd@prager.ws
 	name = Bernd Prager
@@ -12,5 +31,12 @@
 	br = branch
 [core]
 	pager = 
+	editor = vim
 [init]
 	defaultBranch = main
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential

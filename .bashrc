@@ -115,3 +115,22 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+# Add JBang to environment
+alias j!=jbang
+export PATH="$HOME/.jbang/bin:$HOME/.jbang/currentjdk/bin:$PATH"
+export JAVA_HOME=$HOME/.jbang/currentjdk
+
+# Load pyenv-virtualenv automatically by adding
+# the following to ~/.bashrc:
+
+# eval "$(pyenv virtualenv-init -)"
+# export CNI_PATH=~/.local/libexec/cni
+# export DISPLAY=$(ip route show default | sed -n 's/.*via \([^ ]\+\).*$/\1/p'):0
+# export LIBGL_ALWAYS_INDIRECT=0
+# export GALLIUM_DRIVER=llvmpipe
+
+# terraform
+alias tg='terraform'
+
+complete -C /usr/bin/terraform terraform
