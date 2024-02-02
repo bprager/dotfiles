@@ -1,3 +1,8 @@
 
 [Default Applications]
 x-scheme-handler/eclipse+command=_var_lib_flatpak_app_io.dbeaver.DBeaverCommunity_x86_64_stable_01cf7a1ed4e1de6ffa10db1060966543337ec294ea6dcb882204813cb99a0c35_files_dbeaver_.desktop
+text/html=firefox_firefox.desktop
+x-scheme-handler/http=firefox_firefox.desktop
+x-scheme-handler/https=firefox_firefox.desktop
+x-scheme-handler/about=firefox_firefox.desktop
+x-scheme-handler/unknown=firefox_firefox.desktop
