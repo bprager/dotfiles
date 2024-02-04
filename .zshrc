@@ -107,6 +107,11 @@ alias ohmyzsh="mate ~/.oh-my-zsh"
 alias cls="clear"
 alias tf="terraform"
 
-autoload -Uz compinit
+# functions
+fpath=($HOME/.zfunc $fpath)
+autoload -Uz compinit 
+# Autoload all functions in the .zfunc directory
+for func in $HOME/.zfunc/*(.); do
+  autoload -Uz ${func:t}
+done
 zstyle ':completion:*' menu select
-fpath+=~/.zfunc

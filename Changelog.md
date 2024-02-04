@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## TODO
 
 - OS independence
+- Merge all diffreent versions I have
 
 ## [0.1.0] - Tue Nov 22 18:51:22 PST 2022
 
@@ -22,4 +23,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Changelog
+
+
+## [0.2.1] - Sun Feb  4 12:24:59 PST 2024
+
+### Added
+
+- ".zfunc" directory
+- "timestamp" function
+
 
