@@ -26,7 +26,7 @@
 	name = Bernd Prager
 [alias]
 	st = status
-	p = push
+	p = push --force-with-lease
 	co = checkout
 	br = branch
 [core]
