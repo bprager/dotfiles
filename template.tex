@@ -1,23 +1,22 @@
 \documentclass{article}
 \usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
 \pagestyle{fancy}
 \fancyhf{}
-\rfoot{\thepage}
 
-% Start with Roman numerals
-\pagenumbering{roman}
+\def\tightlist{}
 
-% Add content here
+% Customize the footer
+\fancyfoot[C]{\thepage\ of \pageref{LastPage}}
+
 \begin{document}
 
-% Add your content or placeholders here
-\input{content}
-
-% Switch to Arabic numerals
-\newpage
 \pagenumbering{arabic}
 
-\input{more_content}
+$body$
 
 \end{document}
-
