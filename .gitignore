@@ -1,2 +1,5 @@
 # gh credentials
 .config/gh/hosts.yml
+
+# vim bundles (which are git repos as well)
+.vim/bundle/*

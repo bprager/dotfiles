@@ -44,3 +44,6 @@
 	ui = auto
 [branch]
 	sort = -committerdate
+[maintenance]
+	repo = /home/bernd/.dotfiles
+	repo = /mnt/d/Projects/Interviews

@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =5
+let g:netrw_dirhist_5='/mnt/d/Projects/Interviews/Java/SearchSuggestion'
+let g:netrw_dirhist_4='/home/bernd/.dotfiles'
+let g:netrw_dirhist_3='/mnt/d/Projects/Python/attack-monitor'
+let g:netrw_dirhist_2='/home/bernd/Projects'
+let g:netrw_dirhist_1='/lib'
+let g:netrw_dirhist_0='/usr/share/bash-completion'
+let g:netrw_dirhist_9='/usr/share'
+let g:netrw_dirhist_8='/usr'
+let g:netrw_dirhist_7='/'
+let g:netrw_dirhist_6='/mnt/d/Projects/cpp-plugin/CMakeFiles'
