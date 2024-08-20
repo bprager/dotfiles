@@ -1,2 +1,3 @@
-2023/10/03-18:08:41.313 11af7 Creating DB /home/bernd/.config/BraveSoftware/Brave-Browser/Default/shared_proto_db since it was missing.
-2023/10/03-18:08:41.375 11af7 Reusing MANIFEST /home/bernd/.config/BraveSoftware/Brave-Browser/Default/shared_proto_db/MANIFEST-000001
+2024/06/14-07:51:49.755 2aaa4 Reusing MANIFEST /home/bernd/.config/BraveSoftware/Brave-Browser/Default/shared_proto_db/MANIFEST-000001
+2024/06/14-07:51:49.755 2aaa4 Recovering log #3
+2024/06/14-07:51:49.756 2aaa4 Reusing old log /home/bernd/.config/BraveSoftware/Brave-Browser/Default/shared_proto_db/000003.log 

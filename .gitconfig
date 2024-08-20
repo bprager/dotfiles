@@ -21,6 +21,8 @@
 	directory = /home/bernd/Projects/EdisonIoT/vkryvolapovgoto-port
 	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
 	directory = /mnt/d/Projects/EdisonIoT/aws-iot-device-client
+	directory = /mnt/d/Projects/localization-testing-poc
+	directory = /mnt/d/Projects/neo4j-apoc-procedures
 [user]
 	email = bernd@prager.ws
 	name = Bernd Prager
