@@ -1,51 +1,32 @@
-[safe]
-	directory = /mnt/d/Projects/ism-mvp
-	directory = /mnt/d/go/src/go.mozilla.org/sops
-	directory = /mnt/d/Projects/calendar-draw
-	directory = /src/go.mozilla.org/sops
-	directory = /mnt/d/Projects/Python/attack-monitor
-	directory = /mnt/d/Projects/ism-mvp.bak
-	directory = /mnt/d/Projects/Python/sphinx-test
-	directory = /mnt/d/Projects/Python/version-dict
-	directory = /mnt/d/Projects/Vizio/chatgpt-pr-comment
-	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
-	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
-	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
-	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
-	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
-	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
-	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
-	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
-	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
-	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
-	directory = /home/bernd/Projects/EdisonIoT/vkryvolapovgoto-port
-	directory = /home/bernd/Projects/EdisonIoT/aws-iot-device-client
-	directory = /mnt/d/Projects/EdisonIoT/aws-iot-device-client
-	directory = /mnt/d/Projects/localization-testing-poc
-	directory = /mnt/d/Projects/neo4j-apoc-procedures
 [user]
 	email = bernd@prager.ws
 	name = Bernd Prager
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[core]
+	pager = less -F -X
+	excludesFile = ~/.gitignore
+ 	editor = vim
 [alias]
 	st = status
-	p = push --force-with-lease
-	co = checkout
-	br = branch
-[core]
-	pager = 
-	editor = vim
+	ci = commit -v
+  	p = push --force-with-lease
+ 	co = checkout
+ 	br = branch
 [init]
-	defaultBranch = main
+ 	defaultBranch = main
 [credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+ 	helper =
+ 	helper = !/usr/local/bin/gh auth git-credential
 [credential "https://gist.github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+ 	helper =
+ 	helper = !/usr/local/bin/gh auth git-credential
 [column]
-	ui = auto
+ 	ui = auto
 [branch]
-	sort = -committerdate
+ 	sort = -committerdate
 [maintenance]
-	repo = /home/bernd/.dotfiles
-	repo = /mnt/d/Projects/Interviews
+	repo=$(HOME)/dotfiles

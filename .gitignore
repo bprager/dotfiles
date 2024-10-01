@@ -1,8 +1,9 @@
-# gh credentials
-.config/gh/hosts.yml
+# run git config --global core.excludesFile '~/.gitignore'
+.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
+.vscode
+.idea
+Thumbs.db
 
-# vim bundles (which are git repos as well)
-.vim/bundle
-
-# others
-.config/BraveSoftware
