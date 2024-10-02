@@ -30,3 +30,5 @@
  	sort = -committerdate
 [maintenance]
 	repo=$(HOME)/dotfiles
+[push]
+	autoSetupRemote = true

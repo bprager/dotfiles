@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - OS independence
 - Merge all diffreent versions I have
-- tmux configuration
 - vim configuration
 
 ## [0.1.0] - Tue Nov 22 18:51:22 PST 2022
@@ -41,3 +40,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - git configuration
 - ssh configuration
+- tmux configuration
