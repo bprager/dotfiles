@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## TODO
 
 - OS independence
-- Merge all diffreent versions I have
+- Merge all different versions I have
+- Merge .zshrc
 - vim configuration
 - Get "Starship" prompt working in xterm
 
@@ -44,3 +45,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - tmux configuration
 - .Xresources
 
+
+## [0.3.1] - Mon Nov  4 12:31:17 PST 2024
+
+### Added
+
+- a2ps config file

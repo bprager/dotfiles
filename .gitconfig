@@ -32,3 +32,5 @@
 	repo=$(HOME)/dotfiles
 [push]
 	autoSetupRemote = true
+[pull]
+	rebase = false
