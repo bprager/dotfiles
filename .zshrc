@@ -15,8 +15,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-# ZSH_THEME="robbyrussell"
-ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -83,7 +82,7 @@ plugins=(copyfile git virtualenv z zsh-autosuggestions zsh-syntax-highlighting)
 source $ZSH/oh-my-zsh.sh
 
 # Virtualenv
-function virtualenv_info { 
+function virtualenv_info {
     [ $VIRTUAL_ENV ] && echo '('`basename $VIRTUAL_ENV`') '
 }
 
@@ -118,7 +117,7 @@ alias h="history 0"
 
 # functions
 fpath=($HOME/.zfunc $fpath)
-autoload -Uz compinit 
+autoload -Uz compinit
 # Autoload all functions in the .zfunc directory
 for func in $HOME/.zfunc/*(.); do
   autoload -Uz ${func:t}
@@ -132,13 +131,13 @@ export NVM_DIR="$HOME/.nvm"
 # personal bin folder
 export PATH="$PATH:$HOME/bin:$HOME/go/bin"
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
 [ -f "$HOME/.sops" ]  || export SOPS_AGE_KEY_FILE=$HOME/.sops/key.txt
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
+
+#Starship
+eval "$(starship init zsh)"
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
