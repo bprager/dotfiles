@@ -121,10 +121,12 @@ alias j!=jbang
 export PATH="$HOME/.jbang/bin:$HOME/.jbang/currentjdk/bin:$PATH"
 export JAVA_HOME=$HOME/.jbang/currentjdk
 
-# Load pyenv-virtualenv automatically by adding
-# the following to ~/.bashrc:
+# Load pyenv-virtualenv automatically
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
 
-# eval "$(pyenv virtualenv-init -)"
 # export CNI_PATH=~/.local/libexec/cni
 # export DISPLAY=$(ip route show default | sed -n 's/.*via \([^ ]\+\).*$/\1/p'):0
 # export LIBGL_ALWAYS_INDIRECT=0
