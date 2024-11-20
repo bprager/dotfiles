@@ -145,8 +145,6 @@ if [[ -d "${HOME}/.zshrc.d" ]]; then
     done
 fi
 
-
-
 #Starship
 eval "$(starship init zsh)"
 
