@@ -120,8 +120,6 @@ zstyle ':completion:*' menu select
 # personal bin folder
 export PATH="$PATH:$HOME/bin:$HOME/go/bin"
 
-[ -f "$HOME/.sops" ]  || export SOPS_AGE_KEY_FILE=$HOME/.sops/key.txt
-
 # Custom inits
 # Check if the .zshrc.d directory exists
 if [[ -d "${HOME}/.zshrc.d" ]]; then
