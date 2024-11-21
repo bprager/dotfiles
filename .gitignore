@@ -9,3 +9,6 @@ Thumbs.db
 
 # Bundles are github repos too
 .vim/bundle
+
+# Loca configurations
+.config/*
