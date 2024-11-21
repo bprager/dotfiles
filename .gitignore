@@ -10,5 +10,7 @@ Thumbs.db
 # Bundles are github repos too
 .vim/bundle
 
-# Loca configurations
+# Allow selective configurations only
 .config/*
+!.config/tmux/
+..config/tmux/tmux.conf
