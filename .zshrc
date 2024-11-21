@@ -122,9 +122,6 @@ export PATH="$PATH:$HOME/bin:$HOME/go/bin"
 
 [ -f "$HOME/.sops" ]  || export SOPS_AGE_KEY_FILE=$HOME/.sops/key.txt
 
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
-
 # Custom inits
 # Check if the .zshrc.d directory exists
 if [[ -d "${HOME}/.zshrc.d" ]]; then
