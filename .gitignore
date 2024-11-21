@@ -12,5 +12,8 @@ Thumbs.db
 
 # Allow selective configurations only
 .config/*
+!.config/starship.toml
+!.config/nvim/
+.config/nvim/*
+!.config/nvim/init.vim
 !.config/tmux/
-..config/tmux/tmux.conf
