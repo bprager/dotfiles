@@ -10,9 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - OS independence
 - Merge all different versions I have
-- Merge .zshrc
 - vim configuration
-- Get "Starship" prompt working in xterm
 
 ## [0.1.0] - Tue Nov 22 18:51:22 PST 2022
 
@@ -51,3 +49,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - a2ps config file
+
+## [0.3.2] - Thu Nov 21 06:22:24 PM UTC 2024
+
+### Added
+
+- Added '.config/' to dotfiles
+
+### Changed
+
+- Merged .zshrc
+
