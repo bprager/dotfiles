@@ -16,6 +16,7 @@ elif [[ "$os_name" == "FreeBSD" ]]; then
   echo "Running on FreeBSD"
 else
   echo "Unknown Operating System"
+fi
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -153,23 +154,3 @@ eval "$(starship init zsh)"
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-# Get the operating system name
-os_name=$(uname)
-
-# Conditional statements based on OS
-if [[ "$os_name" == "Linux" ]]; then
-    # Linux-specific configuration
-    echo "Running on Linux"
-elif [[ "$os_name" == "Darwin" ]]; then
-    # macOS-specific configuration
-    echo "Running on macOS"
-elif [[ "$os_name" == "FreeBSD" ]]; then
-    # FreeBSD-specific configuration
-    echo "Running on FreeBSD"
-else
-    echo "Unknown Operating System"
-fi
-
-# If you come from bash you might have to change your $PATH.
-PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
-# Use gnu bins
