@@ -124,7 +124,6 @@ fi
 # alias zshconfig="mate ~/.zshrc"
 alias ohmyzsh="mate ~/.oh-my-zsh"
 alias cls="clear"
-alias tf="terraform"
 alias h="history 0"
 
 # functions
