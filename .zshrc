@@ -22,6 +22,7 @@ fi
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+# ZSH_THEME="spaceship"
 ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
@@ -84,9 +85,9 @@ zstyle ':omz:update' frequency 7
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(aws brew colorize copyfile gh git gnu-utils)
-plugins+=(golang gpg-agent gradle history keychain npm)
-plugins+=(pip pipenv python ssh ssh-agent tmux zsh-autosuggestions)
+plugins=(aws brew colorize copyfile gh git gnu-utils golang)
+plugins+=(gpg-agent gradle history keychain npm pip pipenv python)
+plugins+=(ssh ssh-agent starship tmux zsh-autosuggestions)
 if [[ "$os_name" == "Darwin" ]]; then
       plugins+=(macos)
 fi
