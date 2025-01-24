@@ -34,3 +34,5 @@
 	autoSetupRemote = true
 [pull]
 	rebase = false
+[safe]
+	directory = /mnt/saga/Bernd/Docs/Immigration
