@@ -109,9 +109,12 @@ function virtualenv_info {
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
 	export EDITOR='vim'
+  export SYSTEMD_EDITOR=vim
 else
 	export EDITOR='nvim'
+  export SYSTEMD_EDITOR=vim
 fi
+export XAUTHORITY=~/.Xauthority
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -151,8 +154,11 @@ fi
 #Starship
 eval "$(starship init zsh)"
 
+. "$HOME/.local/bin/env"
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 if [[ -d "${HOME}/.sdkman" ]]; then
   export SDKMAN_DIR="$HOME/.sdkman"
   [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 fi
+
