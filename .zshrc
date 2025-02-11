@@ -85,11 +85,11 @@ zstyle ':omz:update' frequency 7
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(aws brew colorize copyfile gh git gnu-utils golang)
+plugins=(aws colorize copyfile gh git gnu-utils golang)
 plugins+=(gpg-agent gradle history keychain npm pip pipenv python)
 plugins+=(ssh ssh-agent starship tmux zsh-autosuggestions)
 if [[ "$os_name" == "Darwin" ]]; then
-      plugins+=(macos)
+      plugins+=(macos brew)
 fi
 
 source $ZSH/oh-my-zsh.sh
