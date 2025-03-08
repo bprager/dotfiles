@@ -11,6 +11,12 @@ if [[ "$os_name" == "Linux" ]]; then
 elif [[ "$os_name" == "Darwin" ]]; then
   # macOS-specific configuration
   echo "Running on macOS"
+  export PATH="/opt/homebrew/opt/util-linux/bin:$PATH"
+  export PATH="/opt/homebrew/opt/util-linux/sbin:$PATH"
+  export LDFLAGS="-L/opt/homebrew/opt/util-linux/lib"
+  export CPPFLAGS="-I/opt/homebrew/opt/util-linux/include"
+  # Use gnu bins
+  export PATH="/opt/homebrew/opt/gawk/libexec/gnubin:$PATH"
 elif [[ "$os_name" == "FreeBSD" ]]; then
   # FreeBSD-specific configuration
   echo "Running on FreeBSD"
@@ -18,11 +24,13 @@ else
   echo "Unknown Operating System"
 fi
 
+# If you come from bash you might have to change your $PATH.
+PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-# ZSH_THEME="spaceship"
 ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
@@ -41,7 +49,7 @@ ZSH_THEME="robbyrussell"
 # Uncomment one of the following lines to change the auto-update behavior
 # zstyle ':omz:update' mode disabled  # disable automatic updates
 # zstyle ':omz:update' mode auto      # update automatically without asking
-# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
+zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
 # Uncomment the following line to change how often to auto-update (in days).
 zstyle ':omz:update' frequency 7
@@ -104,31 +112,50 @@ function virtualenv_info {
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
-# export LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
-	export EDITOR='vim'
+  export EDITOR='vim'
   export SYSTEMD_EDITOR=vim
 else
-	export EDITOR='nvim'
+  export EDITOR='nvim'
   export SYSTEMD_EDITOR=vim
 fi
 export XAUTHORITY=~/.Xauthority
 
 # Compilation flags
-# export ARCHFLAGS="-arch x86_64"
+export ARCHFLAGS="-arch $(uname -m)"
 
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# Set personal aliases, overriding those provided by Oh My Zsh libs,
+# plugins, and themes. Aliases can be placed here, though Oh My Zsh
+# users are encouraged to define aliases within a top-level file in
+# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
+# - $ZSH_CUSTOM/aliases.zsh
+# - $ZSH_CUSTOM/macos.zsh
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 alias ohmyzsh="mate ~/.oh-my-zsh"
 alias cls="clear"
+alias nc="nerdctl"
+alias pm="podman"
+alias isotime="date -u +\"%Y-%m-%dT%H:%M:%SZ\""
 alias h="history 0"
+
+# node version manager
+source $(brew --prefix nvm)/nvm.sh
+# Visual Studio Code
+code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
+# nerdctl
+if [[ -f bin/nerdctl_completion.zsh ]]; then
+  source bin/nerdctl_completion.zsh
+fi
+# terraform
+if ! terraform_loc="$(type -p "$terraform")" || [[ -z $terraform_loc ]]; then
+  alias tf="terraform"
+fi
 
 # functions
 fpath=($HOME/.zfunc $fpath)
@@ -139,7 +166,7 @@ for func in $HOME/.zfunc/*(.); do
 done
 zstyle ':completion:*' menu select
 
-# personal bin folder
+# go bin folder
 export PATH="$PATH:$HOME/bin:$HOME/go/bin"
 
 # Custom inits
