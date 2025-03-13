@@ -181,7 +181,9 @@ fi
 #Starship
 eval "$(starship init zsh)"
 
-. "$HOME/.local/bin/env"
+if [ -f "$HOME/.local/bin/env" ]; then
+    . "$HOME/.local/bin/env"
+fi
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 if [[ -d "${HOME}/.sdkman" ]]; then

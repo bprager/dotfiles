@@ -10,6 +10,9 @@ Thumbs.db
 # Bundles are github repos too
 .vim/bundle
 
+# No authorized keys
+.ssh/authorized_keys
+
 # Allow selective configurations only
 .config/*
 !.config/starship.toml
