@@ -17,6 +17,8 @@ elif [[ "$os_name" == "Darwin" ]]; then
   export CPPFLAGS="-I/opt/homebrew/opt/util-linux/include"
   # Use gnu bins
   export PATH="/opt/homebrew/opt/gawk/libexec/gnubin:$PATH"
+  # node version manager
+  source $(brew --prefix nvm)/nvm.sh
 elif [[ "$os_name" == "FreeBSD" ]]; then
   # FreeBSD-specific configuration
   echo "Running on FreeBSD"
@@ -144,8 +146,6 @@ alias pm="podman"
 alias isotime="date -u +\"%Y-%m-%dT%H:%M:%SZ\""
 alias h="history 0"
 
-# node version manager
-source $(brew --prefix nvm)/nvm.sh
 # Visual Studio Code
 code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
 # nerdctl
