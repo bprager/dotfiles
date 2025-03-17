@@ -36,3 +36,8 @@
 	rebase = false
 [safe]
 	directory = /mnt/saga/Bernd/Docs/Immigration
+[trace2]
+	eventTarget = af_unix:/Users/bprager/.gittrace/trace.sock
+	eventBrief = true
+	eventNesting = 1
+	configparams = custom.metacommands
