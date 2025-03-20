@@ -159,7 +159,7 @@ fi
 
 # functions
 fpath=($HOME/.zfunc $fpath)
-autoload -Uz compinit
+autoload -Uz compinit; compinit
 # Autoload all functions in the .zfunc directory
 for func in $HOME/.zfunc/*(.); do
   autoload -Uz ${func:t}
