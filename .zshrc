@@ -1,6 +1,15 @@
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
+# Custom inits
+# Check if the .zshrc.d directory exists
+if [[ -d "${HOME}/.zshrc.d" ]]; then
+    # Source every file in the .zshrc.d directory
+    for file in "${HOME}/.zshrc.d/"*; do
+        [[ -f $file ]] && source $file
+    done
+fi
+
 # Get the operating system name
 os_name=$(uname)
 
@@ -168,15 +177,6 @@ zstyle ':completion:*' menu select
 
 # go bin folder
 export PATH="$PATH:$HOME/bin:$HOME/go/bin"
-
-# Custom inits
-# Check if the .zshrc.d directory exists
-if [[ -d "${HOME}/.zshrc.d" ]]; then
-    # Source every file in the .zshrc.d directory
-    for file in "${HOME}/.zshrc.d/"*; do
-        [[ -f $file ]] && source $file
-    done
-fi
 
 #Starship
 eval "$(starship init zsh)"
