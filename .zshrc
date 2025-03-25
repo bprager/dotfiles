@@ -1,6 +1,22 @@
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
+# Add Homebrew's shell completion directory to fpath
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+fi
+
+# functions
+fpath=($HOME/.zfunc $fpath)
+
+# Initialize Zsh completion system
+autoload -Uz compinit; compinit
+
+# Autoload all functions in the .zfunc directory
+for func in $HOME/.zfunc/*(.); do
+  autoload -Uz ${func:t}
+done
+
 # Custom inits
 # Check if the .zshrc.d directory exists
 if [[ -d "${HOME}/.zshrc.d" ]]; then
@@ -166,13 +182,6 @@ if ! terraform_loc="$(type -p "$terraform")" || [[ -z $terraform_loc ]]; then
   alias tf="terraform"
 fi
 
-# functions
-fpath=($HOME/.zfunc $fpath)
-autoload -Uz compinit; compinit
-# Autoload all functions in the .zfunc directory
-for func in $HOME/.zfunc/*(.); do
-  autoload -Uz ${func:t}
-done
 zstyle ':completion:*' menu select
 
 # go bin folder
