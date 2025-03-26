@@ -1,3 +1,5 @@
+" set runtimepath for neovim
+set runtimepath^=~/.vim
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
