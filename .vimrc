@@ -19,14 +19,14 @@ call vundle#end()            " required
 filetype plugin indent on    " required for vundle
 " Configure status line
 let g:lightline = {
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
-      \ },
-      \ 'component_function': {
-      \   'gitbranch': 'gitbranch#name'
-      \ },
-      \ }
+    \ 'active': {
+    \   'left': [ [ 'mode', 'paste' ],
+    \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+    \ },
+    \ 'component_function': {
+    \   'gitbranch': 'gitbranch#name'
+    \ },
+    \ }
 
 " crontab configuration
 au BufEnter /tmp/crontab.* setl backupcopy=yes
@@ -45,13 +45,20 @@ set encoding=utf-8
 scriptencoding utf-8
 syntax enable
 
+highlight Comment cterm=italic
+
+au BufNewFile,BufReadPost *.md set filetype=markdown
+let g:markdown_fenced_languages = ['html', 'python', 'java', 'ini', 'makefile',
+    \ 'sql', 'javascript', 'go', 'json', 'sql', 'yaml', 'dockerfile', 'groovy', 'vim']
+
 " Return to last edit position when opening files
 autocmd BufReadPost *
-      \ if line("'\"") > 0 && line("'\"") <= line("$") |
-      \   exe "normal! g`\"" |
-      \ endif
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal! g`\"" |
+    \ endif
 
 " User defined commands
+" mask passwords
 command! Mask :s/"\([^"]*\)"/\='"' . repeat('*', len(submatch(1))) . '"'/g
 
 " Disable line numbers after all plugins have loaded
