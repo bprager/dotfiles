@@ -12,8 +12,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'editorconfig/editorconfig-vim'
 " Light statusline
 Plugin 'itchyny/lightline.vim'
-" ... with git
-Plugin 'itchyny/vim-gitbranch.vim'
+Plugin 'itchyny/vim-gitbranch'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required for vundle
@@ -48,8 +47,8 @@ syntax enable
 highlight Comment cterm=italic
 
 au BufNewFile,BufReadPost *.md set filetype=markdown
-let g:markdown_fenced_languages = ['html', 'python', 'java', 'ini', 'makefile',
-    \ 'sql', 'javascript', 'go', 'json', 'sql', 'yaml', 'dockerfile', 'groovy', 'vim']
+" let g:markdown_fenced_languages = ['html', 'python', 'java', 'ini', 'makefile', 'sql', 'javascript', 'go', 'json', 'sql', 'yaml', 'dockerfile', 'groovy', 'vim']
+let g:markdown_fenced_languages = ['html', 'python', 'ini', 'makefile' , 'sql', 'javascript', 'go', 'json', 'sql', 'yaml', 'dockerfile', 'groovy', 'vim']
 
 " Return to last edit position when opening files
 autocmd BufReadPost *
