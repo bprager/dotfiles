@@ -123,6 +123,7 @@ zstyle ':omz:update' frequency 7
 plugins=(aws colorize copyfile gh git gnu-utils golang)
 plugins+=(gpg-agent gradle history keychain npm pip pipenv python)
 plugins+=(ssh ssh-agent starship tmux zsh-autosuggestions)
+plugins+=(zsh-syntax-highlighting)
 if [[ "$os_name" == "Darwin" ]]; then
       plugins+=(macos brew)
 fi
@@ -154,22 +155,10 @@ export XAUTHORITY=~/.Xauthority
 # Compilation flags
 export ARCHFLAGS="-arch $(uname -m)"
 
-# Set personal aliases, overriding those provided by Oh My Zsh libs,
-# plugins, and themes. Aliases can be placed here, though Oh My Zsh
-# users are encouraged to define aliases within a top-level file in
-# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
-# - $ZSH_CUSTOM/aliases.zsh
-# - $ZSH_CUSTOM/macos.zsh
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-alias ohmyzsh="mate ~/.oh-my-zsh"
-alias cls="clear"
-alias nc="nerdctl"
-alias pm="podman"
-alias isotime="date -u +\"%Y-%m-%dT%H:%M:%SZ\""
-alias h="history 0"
+# Custom aliases
+if [ -f ~/.aliases ]; then
+  source ~/.aliases
+fi
 
 # Visual Studio Code
 code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
