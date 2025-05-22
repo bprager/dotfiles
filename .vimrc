@@ -59,7 +59,7 @@ autocmd BufReadPost *
 
 " User defined commands
 " mask passwords
-command! Mask :s/"\([^"]*\)"/\='"' . repeat('*', len(submatch(1))) . '"'/g
+command! Mask s/=\zs.*/\=repeat('*', len(submatch(0)))/
 
 " Disable line numbers after all plugins have loaded
 set nonumber                  " no line numbers
