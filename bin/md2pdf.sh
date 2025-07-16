@@ -28,15 +28,20 @@ if [[ "$INPUT" != *.md && "$INPUT" != *.markdown ]]; then
 fi
 
 # 4. Check required tools
-REQUIRED_CMDS=("python3" "pandoc" "xelatex" "pandoc-plantuml")
+REQUIRED_CMDS=("python3" "pandoc" "xelatex")
 for cmd in "${REQUIRED_CMDS[@]}"; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     echo "Error: Required tool '$cmd' is not installed or not in PATH."
-    [[ "$cmd" == "pandoc-plantuml" ]] && \
-      echo "Hint: Try 'pip install pandoc-plantuml-filter'"
     exit 1
   fi
 done
+
+# Check if pandoc-plantuml-filter is available in Python
+if ! python3 -c "import pandoc_plantuml_filter" 2>/dev/null; then
+  echo "Error: pandoc-plantuml-filter is not installed."
+  echo "Hint: Try 'pip install pandoc-plantuml-filter' in your virtual environment."
+  exit 1
+fi
 
 # 5. Generate output filename
 BASENAME=$(basename "$INPUT")
@@ -47,6 +52,8 @@ echo "Converting '$INPUT' to '$OUTPUT'..."
 pandoc "$INPUT" \
   -o "$OUTPUT" \
   --pdf-engine=xelatex \
+  --lua-filter=/Users/bernd/.dotfiles/bin/emoji-textemoji.lua \
+  --include-in-header=/Users/bernd/.dotfiles/bin/fonts.tex \
   --filter pandoc-plantuml
 
 echo "✅ Done: $OUTPUT created."

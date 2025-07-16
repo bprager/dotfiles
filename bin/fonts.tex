@@ -1,0 +1,86 @@
+\usepackage{fontspec}
+\usepackage{newunicodechar}
+\usepackage{xcolor}
+
+% Set main fonts
+\setmainfont{Noto Serif}
+\setsansfont{Noto Sans}
+\setmonofont{Noto Sans Mono}
+\setmathfont{Latin Modern Math}
+
+% Prioritize monochrome emoji fonts for universal PDF compatibility
+\IfFontExistsTF{Symbola}{
+  \newfontfamily\emoji{Symbola}
+}{
+  \IfFontExistsTF{Noto Emoji}{
+    \newfontfamily\emoji{Noto Emoji}
+  }{
+    \IfFontExistsTF{DejaVu Sans}{
+      \newfontfamily\emoji{DejaVu Sans}
+    }{
+      \newfontfamily\emoji{Latin Modern Roman}
+    }
+  }
+}
+
+% Symbol font setup
+\IfFontExistsTF{Apple Symbols}{
+  \newfontfamily\symbolsfont{Apple Symbols}
+}{
+  \IfFontExistsTF{Symbola}{
+    \newfontfamily\symbolsfont{Symbola}
+  }{
+    \IfFontExistsTF{Noto Sans Symbols}{
+      \newfontfamily\symbolsfont{Noto Sans Symbols}
+    }{
+      \newfontfamily\symbolsfont{Latin Modern Roman}
+    }
+  }
+}
+
+% Enhanced emoji handling for PDF compatibility
+\newcommand{\textemoji}[1]{%
+  \begingroup
+  \emoji
+  \strut #1%
+  \endgroup
+}
+
+% Define Unicode characters for maximum compatibility
+\newunicodechar{➝}{{\symbolsfont →}}
+\newunicodechar{✅}{\textemoji{✅}}
+\newunicodechar{🎯}{\textemoji{🎯}}
+\newunicodechar{🎬}{\textemoji{🎬}}
+\newunicodechar{📹}{\textemoji{📹}}
+\newunicodechar{🧠}{\textemoji{🧠}}
+\newunicodechar{🔧}{\textemoji{🔧}}
+\newunicodechar{📣}{\textemoji{📣}}
+\newunicodechar{📈}{\textemoji{📈}}
+\newunicodechar{🔍}{\textemoji{🔍}}
+\newunicodechar{🔜}{\textemoji{🔜}}
+\newunicodechar{🎥}{\textemoji{🎥}}
+\newunicodechar{💄}{\textemoji{💄}}
+\newunicodechar{🛠}{\textemoji{🛠}}
+\newunicodechar{🤝}{\textemoji{🤝}}
+
+% Handle variation selector
+\catcode`\️=\active
+\def️{}
+
+% Arrow symbol
+\DeclareTextCommand{\symbolarrow}{\encodingdefault}{{\symbolsfont →}}
+
+% Emoji commands for Lua filter
+\newcommand{\emojicheckmark}{\textemoji{✅}}
+\newcommand{\emojitarget}{\textemoji{🎯}}
+\newcommand{\emojifilm}{\textemoji{🎬}}
+\newcommand{\emojivideo}{\textemoji{📹}}
+\newcommand{\emojibrain}{\textemoji{🧠}}
+\newcommand{\emojitool}{\textemoji{🔧}}
+\newcommand{\emojimegaphone}{\textemoji{📣}}
+\newcommand{\emojichart}{\textemoji{📈}}
+\newcommand{\emojisearch}{\textemoji{🔍}}
+\newcommand{\emojisoon}{\textemoji{🔜}}
+\newcommand{\emojimakeup}{\textemoji{�}}
+\newcommand{\emojihandshake}{\textemoji{🤝}}
+
