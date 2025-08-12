@@ -33,6 +33,8 @@ os_name=$(uname)
 if [[ "$os_name" == "Linux" ]]; then
   # Linux-specific configuration
   echo "Running on Linux"
+  export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
+  export TF_CPP_MIN_LOG_LEVEL=2  # 0=all, 1=info, 2=warning, 3=error
 elif [[ "$os_name" == "Darwin" ]]; then
   # macOS-specific configuration
   echo "Running on macOS"
@@ -188,4 +190,3 @@ if [[ -d "${HOME}/.sdkman" ]]; then
   export SDKMAN_DIR="$HOME/.sdkman"
   [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 fi
-
