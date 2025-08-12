@@ -10,6 +10,8 @@
 	pager = less -F -X
 	excludesFile = ~/.gitignore
  	editor = vim
+	autocrlf = input
+	eol = lf
 [alias]
 	st = status
 	ci = commit -v
