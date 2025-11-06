@@ -1,60 +1,54 @@
 #!/usr/bin/env bash
+# version 1.0.0
+# Thu Nov  6 13:09:28 PST 2025
+set -Eeuo pipefail
 
-set -e
+# --- helpers ---------------------------------------------------------------
+die() { echo "Error: $*" >&2; exit 1; }
 
-# Helper to check Python package
-check_python_package() {
-  python3 -c "import $1" 2>/dev/null
-}
-
-# 1. Check argument
-if [[ $# -ne 1 ]]; then
-  echo "Usage: $0 <file.md>"
+# --- args ------------------------------------------------------------------
+if [[ $# -lt 1 || $# -gt 2 ]]; then
+  echo "Usage: $0 <file.md> [out.pdf]"
   exit 1
 fi
-
 INPUT="$1"
+[[ -f "$INPUT" ]] || die "File not found: $INPUT"
+[[ "$INPUT" == *.md || "$INPUT" == *.markdown ]] || die "Input must end with .md or .markdown"
 
-# 2. Check file exists
-if [[ ! -f "$INPUT" ]]; then
-  echo "Error: File '$INPUT' not found."
-  exit 1
+if [[ $# -eq 2 ]]; then
+  OUTPUT="$2"
+else
+  # robust default: same dir as input
+  OUTPUT="${INPUT%.*}.pdf"
+fi
+[[ -n "${OUTPUT// }" ]] || die "Output path resolved to empty"
+mkdir -p "$(dirname "$OUTPUT")"
+
+# --- tools -----------------------------------------------------------------
+need=(python3 pandoc xelatex plantuml)
+for cmd in "${need[@]}"; do command -v "$cmd" >/dev/null 2>&1 || die "'$cmd' not found in PATH"; done
+python3 - <<'PY' || die "pandoc-plantuml-filter not installed (pip install pandoc-plantuml-filter)"
+import importlib; importlib.import_module("pandoc_plantuml_filter")
+PY
+
+# Optional: Graphviz helps with some diagram layouts
+if ! command -v dot >/dev/null 2>&1; then
+  echo "Warning: 'dot' (Graphviz) not found. Some diagrams may render differently." >&2
 fi
 
-# 3. Check markdown extension
-if [[ "$INPUT" != *.md && "$INPUT" != *.markdown ]]; then
-  echo "Error: File must have .md or .markdown extension."
-  exit 1
-fi
+# Make PlantUML fail clearly and use UTF‑8; pandoc-plantuml will append -t<png/svg>
+export PLANTUML_BIN="plantuml -failfast2 -charset UTF-8"
 
-# 4. Check required tools
-REQUIRED_CMDS=("python3" "pandoc" "xelatex")
-for cmd in "${REQUIRED_CMDS[@]}"; do
-  if ! command -v "$cmd" >/dev/null 2>&1; then
-    echo "Error: Required tool '$cmd' is not installed or not in PATH."
-    exit 1
-  fi
-done
-
-# Check if pandoc-plantuml-filter is available in Python
-if ! python3 -c "import pandoc_plantuml_filter" 2>/dev/null; then
-  echo "Error: pandoc-plantuml-filter is not installed."
-  echo "Hint: Try 'pip install pandoc-plantuml-filter' in your virtual environment."
-  exit 1
-fi
-
-# 5. Generate output filename
-BASENAME=$(basename "$INPUT")
-OUTPUT="${BASENAME%.*}.pdf"
-
-# 6. Convert using pandoc
+# --- run -------------------------------------------------------------------
 echo "Converting '$INPUT' to '$OUTPUT'..."
 pandoc "$INPUT" \
   -o "$OUTPUT" \
+  --standalone \
   --pdf-engine=xelatex \
+  --resource-path="$(dirname "$INPUT")" \
   --lua-filter=/Users/bernd/.dotfiles/bin/emoji-textemoji.lua \
   --include-in-header=/Users/bernd/.dotfiles/bin/fonts.tex \
   --filter pandoc-plantuml
 
-echo "✅ Done: $OUTPUT created."
+echo "✅ Done: $OUTPUT"
 
