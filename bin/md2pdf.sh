@@ -1,10 +1,20 @@
 #!/usr/bin/env bash
-# version 1.0.0
-# Thu Nov  6 13:09:28 PST 2025
+# version 1.1.1
+# Thu Nov  6 13:55:00 PST 2025
 set -Eeuo pipefail
 
-# --- helpers ---------------------------------------------------------------
 die() { echo "Error: $*" >&2; exit 1; }
+warn() { echo "Warning: $*" >&2; }
+
+# Resolve this script's real directory (follows symlinks)
+SOURCE="${BASH_SOURCE[0]}"
+while [[ -L "$SOURCE" ]]; do
+  TARGET="$(readlink "$SOURCE")"
+  if [[ "$TARGET" == /* ]]; then SOURCE="$TARGET"
+  else SOURCE="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)/$TARGET"
+  fi
+done
+SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
 
 # --- args ------------------------------------------------------------------
 if [[ $# -lt 1 || $# -gt 2 ]]; then
@@ -18,7 +28,6 @@ INPUT="$1"
 if [[ $# -eq 2 ]]; then
   OUTPUT="$2"
 else
-  # robust default: same dir as input
   OUTPUT="${INPUT%.*}.pdf"
 fi
 [[ -n "${OUTPUT// }" ]] || die "Output path resolved to empty"
@@ -30,25 +39,46 @@ for cmd in "${need[@]}"; do command -v "$cmd" >/dev/null 2>&1 || die "'$cmd' not
 python3 - <<'PY' || die "pandoc-plantuml-filter not installed (pip install pandoc-plantuml-filter)"
 import importlib; importlib.import_module("pandoc_plantuml_filter")
 PY
+command -v dot >/dev/null 2>&1 || warn "'dot' (Graphviz) not found. Some diagrams may render differently."
 
-# Optional: Graphviz helps with some diagram layouts
-if ! command -v dot >/dev/null 2>&1; then
-  echo "Warning: 'dot' (Graphviz) not found. Some diagrams may render differently." >&2
+# PlantUML behavior
+export PLANTUML_BIN="plantuml -failfast2 -charset UTF-8"
+
+# --- config files (kept next to the script) --------------------------------
+DEFAULTS="$SCRIPT_DIR/pandoc-pdf.yaml"     # YAML should say: include-in-header: [header.tex]
+LUA_FILTER="$SCRIPT_DIR/emoji-textemoji.lua"
+FONTS_TEX="$SCRIPT_DIR/fonts.tex"          # optional
+HEADER_TEX="$SCRIPT_DIR/header.tex"        # used only as fallback if no defaults
+
+# Build a resource path that includes BOTH:
+# - the input file's directory (images next to the .md)
+# - the script directory (header.tex, other shared assets)
+INPUT_DIR="$(cd -P "$(dirname "$INPUT")" >/dev/null 2>&1 && pwd)"
+RESOURCE_PATH="${INPUT_DIR}:${SCRIPT_DIR}"
+
+# --- assemble pandoc command ----------------------------------------------
+args=()
+args+=("$INPUT" -o "$OUTPUT")
+args+=(--standalone)
+args+=(--pdf-engine=xelatex)
+args+=(--resource-path="$RESOURCE_PATH")
+args+=(--filter pandoc-plantuml)
+
+# Use defaults if present; otherwise include header.tex directly
+if [[ -f "$DEFAULTS" ]]; then
+  args+=(--defaults="$DEFAULTS")
+else
+  warn "Defaults not found: $DEFAULTS (using fallback header includes)"
+  [[ -f "$HEADER_TEX" ]] && args+=(--include-in-header="$HEADER_TEX")
 fi
 
-# Make PlantUML fail clearly and use UTF‑8; pandoc-plantuml will append -t<png/svg>
-export PLANTUML_BIN="plantuml -failfast2 -charset UTF-8"
+# Lua filter (optional)
+[[ -f "$LUA_FILTER" ]] && args+=(--lua-filter="$LUA_FILTER") || warn "Lua filter not found: $LUA_FILTER"
+
+# fonts.tex (optional)
+[[ -f "$FONTS_TEX" ]] && args+=(--include-in-header="$FONTS_TEX")
 
 # --- run -------------------------------------------------------------------
 echo "Converting '$INPUT' to '$OUTPUT'..."
-pandoc "$INPUT" \
-  -o "$OUTPUT" \
-  --standalone \
-  --pdf-engine=xelatex \
-  --resource-path="$(dirname "$INPUT")" \
-  --lua-filter=/Users/bernd/.dotfiles/bin/emoji-textemoji.lua \
-  --include-in-header=/Users/bernd/.dotfiles/bin/fonts.tex \
-  --filter pandoc-plantuml
-
+pandoc "${args[@]}"
 echo "✅ Done: $OUTPUT"
-
