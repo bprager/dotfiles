@@ -1,34 +1,17 @@
-% --- header.tex (idempotent, clash-free) ---
+% header.tex  — preamble only
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{pifont}
 
-% Make package loads safe if already loaded elsewhere
-\makeatletter
-\@ifpackageloaded{microtype}{}{%
-  % load only if not loaded yet; no options to avoid clashes
-  \usepackage{microtype}%
-}
-\@ifpackageloaded{xurl}{}{%
-  \usepackage{xurl}%
-}
-\@ifpackageloaded{url}{}{%
-  % xurl extends url; harmless if both present, but avoid reloading
-  \usepackage[hyphens]{url}%
-}
-\@ifpackageloaded{listings}{}{%
-  \usepackage{listings}%
-}
-\makeatother
 
-% Apply settings (works whether packages were loaded here or earlier)
-\microtypesetup{stretch=10}
-\setlength{\emergencystretch}{3em}
-\sloppy
-
-\urlstyle{same}
-
-\lstset{
-  breaklines=true,
-  breakatwhitespace=true,
-  columns=fullflexible,
-  keepspaces=true,
-  basicstyle=\ttfamily\small
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=black,
+  citecolor=black
 }
+
+\setlength{\parindent}{0pt}
+\linespread{1.05}
+

@@ -2,46 +2,62 @@
 -- Pandoc Lua filter: map certain Unicode and emoji to LaTeX-safe forms,
 -- and normalize special hyphens in verbatim/code.
 
--- Normalize variation selectors, NB hyphen etc. in *verbatim* contexts
-local function normalize_verbatim(s)
-  -- Replace non-breaking hyphen (U+2011) and hyphen (U+2010) with ASCII hyphen
-  s = s:gsub("\u{2011}", "-"):gsub("\u{2010}", "-")
-  -- Strip variation selectors if they sneak in
-  s = s:gsub("[\u{FE0F}\u{FE0E}]", ""):gsub("️", "")
+-- Normalize hyphens/dashes/minus and smart quotes everywhere
+local function normalize_all(s)
+  -- Hyphen / dash / minus family:
+  --  U+2010: hyphen
+  --  U+2011: non-breaking hyphen
+  --  U+2013: en dash
+  --  U+2014: em dash
+  --  U+2212: minus sign
+  s = s:gsub("[\u{2010}\u{2011}\u{2013}\u{2014}\u{2212}]", "-")
+
+  -- Smart quotes:
+  --  U+2018 / U+2019: single quotes
+  --  U+201C / U+201D: double quotes
+  s = s:gsub("\u{2018}", "'"):gsub("\u{2019}", "'")
+  s = s:gsub("\u{201C}", '"'):gsub("\u{201D}", '"')
+
+  -- Strip variation selectors, if any
+  s = s:gsub("[\u{FE0F}\u{FE0E}]", ""):gsub("", "")
+
   return s
 end
 
+
 function Code(el)
   if FORMAT == "latex" then
-    el.text = normalize_verbatim(el.text)
+    el.text = normalize_all(el.text)
   end
   return el
 end
 
 function CodeBlock(el)
   if FORMAT == "latex" then
-    el.text = normalize_verbatim(el.text)
+    el.text = normalize_all(el.text)
   end
   return el
 end
+
 
 -- Inline string mapping for LaTeX output
 function Str(el)
   if FORMAT ~= "latex" then return nil end
   local s = el.text
 
-  -- Strip variation selectors
-  s = s:gsub("[\u{FE0F}\u{FE0E}]", ""):gsub("️", "")
+  -- Normalize non-breaking hyphens in normal text
+  s = normalize_all(s)
 
-  -- Map common arrows and math-ish symbols
+  -- Strip variation selectors
+  s = s:gsub("[\u{FE0F}\u{FE0E}]", ""):gsub("", "")
+
+  -- Emoji / symbol logic stays the same
   if s == "➝" or s == "→" then
     return pandoc.RawInline("latex", "\\symbolarrow{}")
   elseif s == "≤" then
     return pandoc.RawInline("latex", "\\ensuremath{\\le{}}")
   elseif s == "≈" then
     return pandoc.RawInline("latex", "\\ensuremath{\\approx{}}")
-
-  -- Emojis (extend as needed)
   elseif s == "✅" then
     return pandoc.RawInline("latex", "\\emojicheckmark{}")
   elseif s == "🎯" then
@@ -70,8 +86,12 @@ function Str(el)
     return pandoc.RawInline("latex", "\\emojithought{}")
   elseif s == "🎲" then
     return pandoc.RawInline("latex", "\\emojidice{}")
+  elseif s == "🌐" then
+    return pandoc.RawInline("latex", "\\emojiGlobe{}")
   end
 
-  -- Let Pandoc handle everything else
-  return nil
+  -- Return normalized string for normal text
+  el.text = s
+  return el
 end
+
