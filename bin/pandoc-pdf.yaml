@@ -1,0 +1,8 @@
+pdf-engine: xelatex
+variables:
+  geometry: margin=1in
+  fontsize: 11pt
+  mainfont: "Noto Serif"
+  monofont: "JetBrains Mono"
+include-in-header:
+  - header.tex
