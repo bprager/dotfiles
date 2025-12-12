@@ -35,6 +35,8 @@ if [[ "$os_name" == "Linux" ]]; then
   echo "Running on Linux"
   export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
   export TF_CPP_MIN_LOG_LEVEL=2  # 0=all, 1=info, 2=warning, 3=error
+  # Allow GTK app using Wayland
+  export GDK_BACKEND=x11
 elif [[ "$os_name" == "Darwin" ]]; then
   # macOS-specific configuration
   echo "Running on macOS"
