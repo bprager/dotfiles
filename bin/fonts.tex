@@ -89,6 +89,15 @@
 \newunicodechar{^^^^2010}{-}
 \newunicodechar{^^^^2011}{\mbox{-}}
 
+% Arrow, works in body and in PDF bookmarks
+\providecommand{\texorpdfstring}[2]{#1}
+\newcommand{\symbolarrow}{\texorpdfstring{\ensuremath{\rightarrow}}{->}}
+
+% Fallback, if any raw Unicode arrow survives later filters
+\newunicodechar{→}{\symbolarrow{}}
+\newunicodechar{➝}{\symbolarrow{}}
+
+
 % Handle U+202F (narrow no-break space) as non-breaking
 \catcode"202F=\active
 \begingroup
@@ -98,9 +107,6 @@
 % Strip VS16 if it sneaks through
 \catcode`\️=\active
 \def️{}
-
-% Arrow macro used by the Lua filter
-\DeclareTextCommand{\symbolarrow}{\encodingdefault}{{\symbolsfont →}}
 
 % Emoji command shims used by the Lua filter
 \newcommand{\emojicheckmark}{\textemoji{✅}}
