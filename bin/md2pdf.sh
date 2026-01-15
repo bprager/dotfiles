@@ -49,9 +49,9 @@ HEADER_ENV_VAR="MD2PDF_HEADER"
 
 trim_ws() {
   local s="$1"
-  s="${s#"${s%%[!$' 	
+  s="${s#"${s%%[!$'
 ']*}"}"
-  s="${s%"${s##*[!$' 	
+  s="${s%"${s##*[!$'
 ']}"}"
   printf '%s' "$s"
 }
@@ -347,6 +347,7 @@ repl = {
     "\u2013": "-",  # en dash
     "\u2014": "-",  # em dash
     "\u2212": "-",  # minus sign
+    "\u2E3B": "-",  # three-em dash
 
     # smart single quotes
     "\u2018": "'",
@@ -622,6 +623,7 @@ args+=(--include-in-header="$TMP_OVERRIDES_HEADER")
 
 # Filters, order matters, Lua filter last
 args+=(--filter pandoc-plantuml)
+args+=(--lua-filter color.lua)
 args+=(--lua-filter="$LUA_FILTER_EFFECTIVE")
 
 # Input and output

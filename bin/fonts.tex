@@ -93,6 +93,11 @@
 \providecommand{\texorpdfstring}[2]{#1}
 \newcommand{\symbolarrow}{\texorpdfstring{\ensuremath{\rightarrow}}{->}}
 
+% U+2E3B THREE-EM DASH (⸻)
+\providecommand{\texorpdfstring}[2]{#1}
+\newcommand{\threeemdash}{\texorpdfstring{\rule[0.55ex]{3em}{0.12ex}}{---}}
+\newunicodechar{⸻}{\threeemdash{}}
+
 % Fallback, if any raw Unicode arrow survives later filters
 \newunicodechar{→}{\symbolarrow{}}
 \newunicodechar{➝}{\symbolarrow{}}
