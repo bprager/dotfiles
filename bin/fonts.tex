@@ -2,53 +2,71 @@
 \usepackage{newunicodechar}
 \usepackage{xcolor}
 
-% Set main fonts
-\setmainfont{Noto Serif}
-\setsansfont{Noto Sans}
-\setmonofont{Noto Sans Mono}
+% Make fontspec robust and widen glyph coverage
+\defaultfontfeatures{Ligatures=TeX,Renderer=HarfBuzz,Scale=MatchLowercase}
+
+% Main fonts
+\setmainfont{Noto Serif}[
+  UprightFont = *,
+  ItalicFont  = * Italic,
+  BoldFont    = * Bold,
+  BoldItalicFont = * Bold Italic,
+  % Use explicit fallbacks for missing symbols/arrows
+  FallbackFamilies = {Symbola, Noto Emoji, Apple Symbols, DejaVu Sans}
+]
+\setsansfont{Noto Sans}[
+  FallbackFamilies = {Symbola, Noto Emoji, Apple Symbols, DejaVu Sans}
+]
+\setmonofont{Noto Sans Mono}[
+  Scale=MatchLowercase,
+  % Important: ensure code blocks can show emoji and symbols too
+  FallbackFamilies = {Noto Emoji, Symbola, Apple Symbols, DejaVu Sans}
+]
 \setmathfont{Latin Modern Math}
 
-% Prioritize monochrome emoji fonts for universal PDF compatibility
+% Emoji and symbols “helper” faces
 \IfFontExistsTF{Symbola}{
-  \newfontfamily\emoji{Symbola}
+  \newfontfamily\emoji{Symbola}[Renderer=HarfBuzz]
 }{
   \IfFontExistsTF{Noto Emoji}{
-    \newfontfamily\emoji{Noto Emoji}
+    \newfontfamily\emoji{Noto Emoji}[Renderer=HarfBuzz]
   }{
     \IfFontExistsTF{DejaVu Sans}{
-      \newfontfamily\emoji{DejaVu Sans}
+      \newfontfamily\emoji{DejaVu Sans}[Renderer=HarfBuzz]
     }{
-      \newfontfamily\emoji{Latin Modern Roman}
+      \newfontfamily\emoji{Latin Modern Roman}[Renderer=HarfBuzz]
     }
   }
 }
-
-% Symbol font setup
 \IfFontExistsTF{Apple Symbols}{
-  \newfontfamily\symbolsfont{Apple Symbols}
+  \newfontfamily\symbolsfont{Apple Symbols}[Renderer=HarfBuzz]
 }{
   \IfFontExistsTF{Symbola}{
-    \newfontfamily\symbolsfont{Symbola}
+    \newfontfamily\symbolsfont{Symbola}[Renderer=HarfBuzz]
   }{
     \IfFontExistsTF{Noto Sans Symbols}{
-      \newfontfamily\symbolsfont{Noto Sans Symbols}
+      \newfontfamily\symbolsfont{Noto Sans Symbols}[Renderer=HarfBuzz]
     }{
-      \newfontfamily\symbolsfont{Latin Modern Roman}
+      \newfontfamily\symbolsfont{Latin Modern Roman}[Renderer=HarfBuzz]
     }
   }
 }
 
-% Enhanced emoji handling for PDF compatibility
+% Emoji wrapper
 \newcommand{\textemoji}[1]{%
-  \begingroup
-  \emoji
-  \strut #1%
-  \endgroup
+  {\emoji\strut #1}%
 }
 
-% Define Unicode characters for maximum compatibility
-\newunicodechar{➝}{{\symbolsfont →}}
+% Unicode → robust glyph or math mapping
+% Arrows and math-ish
+\newunicodechar{→}{{\symbolsfont →}}        % U+2192
+\newunicodechar{➝}{{\symbolsfont →}}        % map “long arrow” to same
+\newunicodechar{≤}{\ensuremath{\le}}         % U+2264
+\newunicodechar{≈}{\ensuremath{\approx}}     % U+2248
+
+% Emojis (add as needed)
 \newunicodechar{✅}{\textemoji{✅}}
+\newunicodechar{❌}{\textemoji{❌}}
 \newunicodechar{🎯}{\textemoji{🎯}}
 \newunicodechar{🎬}{\textemoji{🎬}}
 \newunicodechar{📹}{\textemoji{📹}}
@@ -62,25 +80,55 @@
 \newunicodechar{💄}{\textemoji{💄}}
 \newunicodechar{🛠}{\textemoji{🛠}}
 \newunicodechar{🤝}{\textemoji{🤝}}
+\newunicodechar{💭}{\textemoji{💭}}
+\newunicodechar{🎲}{\textemoji{🎲}}
+\newunicodechar{🌱}{\textemoji{🌱}}
+% Non-breaking hyphen (U+2011) → regular hyphen with no break after it
+\newunicodechar{^^^^2011}{\nobreakdash-}
+% (optional) Hyphen (U+2010 and U+2011) as well, some sources use it
+\newunicodechar{^^^^2010}{-}
+\newunicodechar{^^^^2011}{\mbox{-}}
 
-% Handle variation selector
+% Arrow, works in body and in PDF bookmarks
+\providecommand{\texorpdfstring}[2]{#1}
+\newcommand{\symbolarrow}{\texorpdfstring{\ensuremath{\rightarrow}}{->}}
+
+% U+2E3B THREE-EM DASH (⸻)
+\providecommand{\texorpdfstring}[2]{#1}
+\newcommand{\threeemdash}{\texorpdfstring{\rule[0.55ex]{3em}{0.12ex}}{---}}
+\newunicodechar{⸻}{\threeemdash{}}
+
+% Fallback, if any raw Unicode arrow survives later filters
+\newunicodechar{→}{\symbolarrow{}}
+\newunicodechar{➝}{\symbolarrow{}}
+
+
+% Handle U+202F (narrow no-break space) as non-breaking
+\catcode"202F=\active
+\begingroup
+  \lccode`\~="202F
+  \lowercase{\endgroup\def~}{\nobreakspace}
+
+% Strip VS16 if it sneaks through
 \catcode`\️=\active
 \def️{}
 
-% Arrow symbol
-\DeclareTextCommand{\symbolarrow}{\encodingdefault}{{\symbolsfont →}}
-
-% Emoji commands for Lua filter
+% Emoji command shims used by the Lua filter
 \newcommand{\emojicheckmark}{\textemoji{✅}}
+\newcommand{\emojicrossmark}{\textemoji{❌}}
 \newcommand{\emojitarget}{\textemoji{🎯}}
 \newcommand{\emojifilm}{\textemoji{🎬}}
-\newcommand{\emojivideo}{\textemoji{📹}}
+\newcommand{\emojivideo}{\textemoji{📹}}   % also used for 🎥
 \newcommand{\emojibrain}{\textemoji{🧠}}
-\newcommand{\emojitool}{\textemoji{🔧}}
+\newcommand{\emojitool}{\textemoji{🔧}}    % also used for 🛠
 \newcommand{\emojimegaphone}{\textemoji{📣}}
 \newcommand{\emojichart}{\textemoji{📈}}
 \newcommand{\emojisearch}{\textemoji{🔍}}
 \newcommand{\emojisoon}{\textemoji{🔜}}
-\newcommand{\emojimakeup}{\textemoji{�}}
+\newcommand{\emojimakeup}{\textemoji{💄}}  % fixed typo
 \newcommand{\emojihandshake}{\textemoji{🤝}}
+\newcommand{\emojithought}{\textemoji{💭}}
+\newcommand{\emojidice}{\textemoji{🎲}}
+\newcommand{\emojiSeedling}{\textemoji{🌱}}
+\newcommand{\emojiGlobe}{\textemoji{🌐}}   % globe with meridians
 
