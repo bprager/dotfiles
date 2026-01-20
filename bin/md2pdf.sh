@@ -328,6 +328,7 @@ DEFAULTS="$SCRIPT_DIR/pandoc-pdf.yaml"
 LOCAL_LUA_FILTER="$SCRIPT_DIR/emoji-textemoji.lua"
 FONTS_TEX="$SCRIPT_DIR/fonts.tex"
 HEADER_TEX="$SCRIPT_DIR/header.tex"
+COLOR_LUA="$SCRIPT_DIR/color.lua"
 
 # Sanitize Unicode punctuation in input (do not touch arrows here)
 SANITIZED_INPUT="$WORKDIR/input.sanitized.md"
@@ -623,7 +624,8 @@ args+=(--include-in-header="$TMP_OVERRIDES_HEADER")
 
 # Filters, order matters, Lua filter last
 args+=(--filter pandoc-plantuml)
-args+=(--lua-filter color.lua)
+[[ -f "$COLOR_LUA" ]] || die "Missing Lua filter: $COLOR_LUA"
+args+=(--lua-filter "$COLOR_LUA")
 args+=(--lua-filter="$LUA_FILTER_EFFECTIVE")
 
 # Input and output
@@ -642,4 +644,3 @@ fi
 pandoc "${args[@]}"
 
 info "✅ Done: $OUTPUT"
-
