@@ -10,8 +10,8 @@ Thumbs.db
 # Bundles are github repos too
 .vim/bundle
 
-# No authorized keys
-.ssh/authorized_keys
+# No keys
+.ssh/
 
 # Allow selective configurations only
 .config/*
