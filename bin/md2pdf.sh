@@ -13,12 +13,13 @@ info() { echo "$*" >&2; }
 usage() {
   cat >&2 <<'TXT'
 Usage:
-  md2pdf.sh [--header[=HEADER.md]] <file.md> [out.pdf]
+  md2pdf.sh [--header[=HEADER.md]] [--toc|--no-toc|--toc=auto] [--toc-depth=N] [--number-sections|--no-number-sections] <file.md> [out.pdf]
 
 Examples:
   md2pdf.sh main.md
   md2pdf.sh main.md out.pdf
   md2pdf.sh main.md --header=letterhead.md
+  md2pdf.sh --toc --toc-depth=2 --number-sections main.md out.pdf
   md2pdf.sh --header=letterhead.md main.md
   md2pdf.sh --header main.md              # uses MD2PDF_HEADER (or .env lookup)
   md2pdf.sh --header -- main.md out.pdf   # explicit end of options
@@ -28,6 +29,9 @@ Env:
   MD2PDF_DEBUG=1           Print the full pandoc command
   MD2PDF_FORCE_LOCAL_LUA=1 Use emoji-textemoji.lua next to this script (unsafe if it contains Unicode [] classes)
   MD2PDF_HEADER=<path>     Default header markdown file (only used when --header is present without a value)
+  MD2PDF_TOC=auto|1|0      TOC mode. auto enables TOC only when markdown contains [TOC], [[TOC]], <!-- TOC -->, or a TOC heading (Index/Contents/Table of Contents) (default: auto)
+  MD2PDF_TOC_DEPTH=<int>   TOC depth when enabled (default: 2)
+  MD2PDF_NUMBER_SECTIONS=1|0 Enable/disable section numbering (default: 1)
 TXT
 }
 
@@ -162,17 +166,105 @@ expand_path() {
   printf '%s' "$p"
 }
 
+parse_bool_default() {
+  local raw="$1"
+  local default="$2"
+  if [[ -z "${raw:-}" ]]; then
+    printf '%s' "$default"
+    return 0
+  fi
+  case "${raw,,}" in
+    1|true|yes|on) printf '1' ;;
+    0|false|no|off) printf '0' ;;
+    *)
+      die "Invalid boolean value '$raw' (expected 1/0, true/false, yes/no, on/off)"
+      ;;
+  esac
+}
+
+parse_toc_mode() {
+  local raw="$1"
+  local normalized
+  normalized="$(printf '%s' "${raw:-auto}" | tr '[:upper:]' '[:lower:]')"
+  case "$normalized" in
+    auto|"")
+      printf 'auto'
+      ;;
+    1|true|yes|on)
+      printf 'on'
+      ;;
+    0|false|no|off)
+      printf 'off'
+      ;;
+    *)
+      die "Invalid MD2PDF_TOC value '$raw' (expected auto/1/0, true/false, yes/no, on/off)"
+      ;;
+  esac
+}
+
+markdown_has_toc_marker() {
+  local file="$1"
+  [[ -f "$file" ]] || return 1
+  # Supported explicit markers/headings:
+  # [TOC]
+  # [[TOC]]
+  # <!-- TOC -->
+  # # Index / ## Contents / ## Table of Contents (common markdown TOC headings)
+  grep -Eiq '^[[:space:]]*(\[\[TOC\]\]|\[TOC\])[[:space:]]*$|<!--[[:space:]]*TOC[[:space:]]*-->|^[[:space:]]*#{1,3}[[:space:]]*(index|contents|table[[:space:]]+of[[:space:]]+contents)[[:space:]]*$' "$file"
+}
+
 HEADER_REQUESTED=0
 HEADER_VALUE=""
 HEADER_SOURCE=""
 HEADER_BASE_DIR=""
 positional=()
 
+# Defaults can be overridden by CLI flags.
+TOC_MODE="$(parse_toc_mode "${MD2PDF_TOC:-auto}")"
+TOC_ENABLED=0
+NUMBER_SECTIONS_ENABLED="$(parse_bool_default "${MD2PDF_NUMBER_SECTIONS:-}" 1)"
+TOC_DEPTH="${MD2PDF_TOC_DEPTH:-2}"
+[[ "$TOC_DEPTH" =~ ^[0-9]+$ ]] || die "MD2PDF_TOC_DEPTH must be an integer >= 1"
+(( TOC_DEPTH >= 1 )) || die "MD2PDF_TOC_DEPTH must be >= 1"
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -h|--help)
       usage
       exit 0
+      ;;
+    --toc)
+      TOC_MODE=on
+      shift
+      ;;
+    --no-toc)
+      TOC_MODE=off
+      shift
+      ;;
+    --toc=auto)
+      TOC_MODE=auto
+      shift
+      ;;
+    --toc-depth)
+      [[ $# -ge 2 ]] || die "--toc-depth requires a numeric value"
+      [[ "${2:-}" =~ ^[0-9]+$ ]] || die "--toc-depth requires an integer >= 1"
+      (( ${2:-0} >= 1 )) || die "--toc-depth must be >= 1"
+      TOC_DEPTH="${2}"
+      shift 2
+      ;;
+    --toc-depth=*)
+      TOC_DEPTH="${1#--toc-depth=}"
+      [[ "$TOC_DEPTH" =~ ^[0-9]+$ ]] || die "--toc-depth requires an integer >= 1"
+      (( TOC_DEPTH >= 1 )) || die "--toc-depth must be >= 1"
+      shift
+      ;;
+    --number-sections)
+      NUMBER_SECTIONS_ENABLED=1
+      shift
+      ;;
+    --no-number-sections)
+      NUMBER_SECTIONS_ENABLED=0
+      shift
       ;;
     --header)
       HEADER_REQUESTED=1
@@ -237,6 +329,25 @@ INPUT="${positional[0]}"
 [[ -f "$INPUT" ]] || die "File not found: $INPUT"
 [[ "$INPUT" == *.md || "$INPUT" == *.markdown ]] || die "Input must end with .md or .markdown"
 ORIGINAL_INPUT="$INPUT"
+
+case "$TOC_MODE" in
+  on)
+    TOC_ENABLED=1
+    ;;
+  off)
+    TOC_ENABLED=0
+    ;;
+  auto)
+    if markdown_has_toc_marker "$ORIGINAL_INPUT"; then
+      TOC_ENABLED=1
+    else
+      TOC_ENABLED=0
+    fi
+    ;;
+  *)
+    die "Internal error: unsupported TOC mode '$TOC_MODE'"
+    ;;
+esac
 
 OUTPUT=""
 if [[ ${#positional[@]} -eq 2 ]]; then
@@ -602,6 +713,13 @@ args+=(--pdf-engine-opt=-halt-on-error)
 args+=(--pdf-engine-opt=-file-line-error)
 args+=(--pdf-engine-opt=-interaction=nonstopmode)
 args+=(--resource-path="$RESOURCE_PATH")
+if [[ "$TOC_ENABLED" -eq 1 ]]; then
+  args+=(--toc)
+  args+=(--toc-depth="$TOC_DEPTH")
+fi
+if [[ "$NUMBER_SECTIONS_ENABLED" -eq 1 ]]; then
+  args+=(--number-sections)
+fi
 
 # Defaults
 if [[ -f "$DEFAULTS" ]]; then
@@ -635,6 +753,24 @@ args+=(-o "$OUTPUT")
 info "Converting '$ORIGINAL_INPUT' to '$OUTPUT'"
 if [[ -n "${LETTERHEAD:-}" ]]; then
   info "Using header: '$LETTERHEAD'"
+fi
+if [[ "$TOC_ENABLED" -eq 1 ]]; then
+  if [[ "$TOC_MODE" == "auto" ]]; then
+    info "TOC enabled (auto mode, marker found, depth $TOC_DEPTH)"
+  else
+    info "TOC enabled (depth $TOC_DEPTH)"
+  fi
+else
+  if [[ "$TOC_MODE" == "auto" ]]; then
+    info "TOC disabled (auto mode, no TOC marker found)"
+  else
+    info "TOC disabled"
+  fi
+fi
+if [[ "$NUMBER_SECTIONS_ENABLED" -eq 1 ]]; then
+  info "Section numbering enabled"
+else
+  info "Section numbering disabled"
 fi
 
 if [[ "${MD2PDF_DEBUG:-}" == "1" ]]; then
