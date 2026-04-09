@@ -7,6 +7,7 @@ os_name=$(uname)
 # Homebrew completion (macOS only)
 if [[ "$os_name" == "Darwin" ]] && command -v brew >/dev/null 2>&1; then
   fpath=("$(brew --prefix)/share/zsh/site-functions" $fpath)
+  fpath+=~/.zfunc; autoload -Uz compinit; compinit
 fi
 
 # User functions
@@ -62,6 +63,8 @@ if [[ "$os_name" == "Darwin" ]]; then
 else
   PATH="$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
 fi
+
+export PATH="$HOME/.npm-global/bin:$PATH"
 
 # Theme
 ZSH_THEME="robbyrussell"
