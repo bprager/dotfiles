@@ -54,8 +54,14 @@ else
   [[ $- == *i* ]] && echo "Unknown Operating System"
 fi
 
-# Base PATH (keeps your original intent, but avoids overriding later)
-PATH="$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
+# Base PATH
+# Prefer user-local bins so per-user global npm tools (like openclaw) are
+# writable/updateable under this account. Keep Homebrew next for system tools.
+if [[ "$os_name" == "Darwin" ]]; then
+  PATH="$HOME/bin:$HOME/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:$PATH"
+else
+  PATH="$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
+fi
 
 # Theme
 ZSH_THEME="robbyrussell"
@@ -146,4 +152,3 @@ if [[ -d "$HOME/.sdkman" ]]; then
 fi
 
 export AWS_PAGER=""
-

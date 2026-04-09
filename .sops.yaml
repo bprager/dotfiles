@@ -1,0 +1,6 @@
+# .sops.yaml
+# enrypts all values for keys ending in `_KEY` or `_SECRET`
+creation_rules:
+  - encrypted_regex: '(?i).*(_KEY|_SECRET|_TOKEN|_PASSWORD)$'
+    age: ['age1cjr6c2s0u6yy6ttxnwtjqyhzt5w0w8temhwm95gle0l0wkf0jvwqlt8l4x']
+
