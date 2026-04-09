@@ -1,23 +1,48 @@
 # Path to your oh-my-zsh installation
-export ZSH="$HOME/.oh-my-zsh"
+export ZSH="${ZSH:-$HOME/.oh-my-zsh}"
 
 # Detect OS once
-os_name=$(uname)
+os_name="$(uname -s)"
+
+typeset -U path fpath
+
+path_prepend() {
+  local dir="$1"
+  [[ -d "$dir" ]] || return 0
+  path=("$dir" $path)
+}
+
+path_append() {
+  local dir="$1"
+  [[ -d "$dir" ]] || return 0
+  path+=("$dir")
+}
+
+fpath_prepend() {
+  local dir="$1"
+  [[ -d "$dir" ]] || return 0
+  fpath=("$dir" $fpath)
+}
+
+# Base PATH
+path_prepend "/usr/local/bin"
+path_prepend "$HOME/.local/bin"
+path_prepend "$HOME/bin"
+path_prepend "$HOME/.npm-global/bin"
+path_append "$HOME/go/bin"
 
 # Homebrew completion (macOS only)
 if [[ "$os_name" == "Darwin" ]] && command -v brew >/dev/null 2>&1; then
-  fpath=("$(brew --prefix)/share/zsh/site-functions" $fpath)
-  fpath+=~/.zfunc; autoload -Uz compinit; compinit
+  brew_prefix="$(brew --prefix 2>/dev/null)"
+  [[ -n $brew_prefix ]] && fpath_prepend "$brew_prefix/share/zsh/site-functions"
+  unset brew_prefix
 fi
 
 # User functions
 if [[ -d "$HOME/.zfunc" ]]; then
-  fpath=("$HOME/.zfunc" $fpath)
+  fpath_prepend "$HOME/.zfunc"
   autoload -Uz "$HOME"/.zfunc/*(:t)
 fi
-
-# Remove duplicates in fpath
-typeset -U fpath
 
 # Initialize completion only for interactive shells
 if [[ $- == *i* ]]; then
@@ -32,39 +57,36 @@ for rc in "$HOME/.zshrc.d"/*.zsh(N); do
 done
 
 # OS specific configuration
-if [[ "$os_name" == "Linux" ]]; then
-  [[ $- == *i* ]] && echo "Running on Linux"
-  export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
-  export TF_CPP_MIN_LOG_LEVEL=2  # 0=all, 1=info, 2=warning, 3=error
-  # Allow GTK app using Wayland
-  export GDK_BACKEND=x11
-elif [[ "$os_name" == "Darwin" ]]; then
-  [[ $- == *i* ]] && echo "Running on macOS"
-  export PATH="/opt/homebrew/opt/util-linux/bin:/opt/homebrew/opt/util-linux/sbin:$PATH"
-  export LDFLAGS="-L/opt/homebrew/opt/util-linux/lib"
-  export CPPFLAGS="-I/opt/homebrew/opt/util-linux/include"
-  # GNU tools
-  export PATH="/opt/homebrew/opt/gawk/libexec/gnubin:$PATH"
-  # Node version manager (only if installed)
-  if command -v brew >/dev/null 2>&1 && [[ -s "$(brew --prefix nvm)/nvm.sh" ]]; then
-    source "$(brew --prefix nvm)/nvm.sh"
-  fi
-elif [[ "$os_name" == "FreeBSD" ]]; then
-  [[ $- == *i* ]] && echo "Running on FreeBSD"
-else
-  [[ $- == *i* ]] && echo "Unknown Operating System"
-fi
+case "$os_name" in
+  Linux)
+    if [[ -d /usr/lib/x86_64-linux-gnu ]]; then
+      export LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+    fi
+    export TF_CPP_MIN_LOG_LEVEL=2  # 0=all, 1=info, 2=warning, 3=error
+    export GDK_BACKEND=x11
+    ;;
+  Darwin)
+    if command -v brew >/dev/null 2>&1; then
+      util_linux_prefix="$(brew --prefix util-linux 2>/dev/null)"
+      if [[ -n $util_linux_prefix ]]; then
+        path_prepend "$util_linux_prefix/bin"
+        path_prepend "$util_linux_prefix/sbin"
+        export LDFLAGS="-L${util_linux_prefix}/lib${LDFLAGS:+ $LDFLAGS}"
+        export CPPFLAGS="-I${util_linux_prefix}/include${CPPFLAGS:+ $CPPFLAGS}"
+      fi
 
-# Base PATH
-# Prefer user-local bins so per-user global npm tools (like openclaw) are
-# writable/updateable under this account. Keep Homebrew next for system tools.
-if [[ "$os_name" == "Darwin" ]]; then
-  PATH="$HOME/bin:$HOME/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:$PATH"
-else
-  PATH="$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
-fi
+      gawk_prefix="$(brew --prefix gawk 2>/dev/null)"
+      [[ -n $gawk_prefix ]] && path_prepend "$gawk_prefix/libexec/gnubin"
 
-export PATH="$HOME/.npm-global/bin:$PATH"
+      nvm_prefix="$(brew --prefix nvm 2>/dev/null)"
+      [[ -n $nvm_prefix && -s "$nvm_prefix/nvm.sh" ]] && source "$nvm_prefix/nvm.sh"
+
+      unset util_linux_prefix gawk_prefix nvm_prefix
+    fi
+    ;;
+  FreeBSD)
+    ;;
+esac
 
 # Theme
 ZSH_THEME="robbyrussell"
@@ -86,7 +108,7 @@ if [[ "$os_name" == "Darwin" ]]; then
 fi
 
 # Load Oh My Zsh only if it exists
-if [[ -d "$ZSH" ]]; then
+if [[ -r "$ZSH/oh-my-zsh.sh" ]]; then
   source "$ZSH/oh-my-zsh.sh"
 fi
 
@@ -110,7 +132,9 @@ fi
 export XAUTHORITY="$HOME/.Xauthority"
 
 # Compilation flags
-export ARCHFLAGS="-arch $(uname -m)"
+if [[ "$os_name" == "Darwin" ]]; then
+  export ARCHFLAGS="-arch $(uname -m)"
+fi
 
 # Custom aliases
 if [[ -f "$HOME/.aliases" ]]; then
@@ -119,7 +143,16 @@ fi
 
 # Visual Studio Code launcher
 code() {
-  VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args "$@"
+  if whence -p code >/dev/null 2>&1; then
+    command code "$@"
+  elif [[ "$os_name" == "Darwin" ]]; then
+    VSCODE_CWD="$PWD" open -n -b "${VSCODE_BUNDLE_ID:-com.microsoft.VSCode}" --args "$@"
+  elif whence -p codium >/dev/null 2>&1; then
+    command codium "$@"
+  else
+    print -u2 -- "code: Visual Studio Code CLI is not available"
+    return 127
+  fi
 }
 
 # nerdctl completion
@@ -127,21 +160,8 @@ if [[ -f "$HOME/bin/nerdctl_completion.zsh" ]]; then
   source "$HOME/bin/nerdctl_completion.zsh"
 fi
 
-# terraform alias
-if ! command -v terraform >/dev/null 2>&1; then
-  alias tf="terraform"
-fi
-
 # Completion style
 zstyle ':completion:*' menu select
-
-# Go bin folder and user bin
-export PATH="$PATH:$HOME/bin:$HOME/go/bin"
-
-# Starship (interactive only)
-if [[ $- == *i* ]]; then
-  eval "$(starship init zsh)"
-fi
 
 # Local environment overrides
 if [[ -f "$HOME/.local/bin/env" ]]; then

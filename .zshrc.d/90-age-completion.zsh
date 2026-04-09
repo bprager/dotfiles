@@ -1,5 +1,5 @@
 # Custom completion for the age command only if 'age' is available
-if (( $+commands[age] )); then
+if (( $+commands[age] )) && (( $+functions[compdef] )); then
   function _age_completion {
     local state curcontext="$curcontext" ret=1
 
@@ -20,4 +20,3 @@ if (( $+commands[age] )); then
   # Register the completion function
   compdef _age_completion age
 fi
-

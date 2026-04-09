@@ -1,5 +1,5 @@
 # check recent gh run log
-if which gh >/dev/null 2>&1; then
+if command -v gh >/dev/null 2>&1; then
   function gh-run-log {
     local run_id
     run_id=$(gh run list --limit 1 --json databaseId --jq '.[0].databaseId')
@@ -10,4 +10,3 @@ if which gh >/dev/null 2>&1; then
     fi
   }
 fi
-

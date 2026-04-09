@@ -1,13 +1,24 @@
 # ~/.zshrc.d/20-gcloud-gsutil-path.zsh
 
-GCLOUD_SDK_BIN="/opt/homebrew/share/google-cloud-sdk/bin"
-GSUTIL="${GCLOUD_SDK_BIN}/gsutil"
+typeset -a gcloud_sdk_bins
+gcloud_sdk_bins=()
 
-# If gsutil exists and is executable, ensure the SDK bin dir is on PATH
-if [[ -x "$GSUTIL" ]]; then
-  case ":$PATH:" in
-    *":$GCLOUD_SDK_BIN:"*) ;;  # already present
-    *) export PATH="$GCLOUD_SDK_BIN:$PATH" ;;
-  esac
+if command -v brew >/dev/null 2>&1; then
+  gcloud_prefix="$(brew --prefix google-cloud-sdk 2>/dev/null)"
+  [[ -n $gcloud_prefix ]] && gcloud_sdk_bins+=("$gcloud_prefix/bin")
 fi
 
+gcloud_sdk_bins+=(
+  "$HOME/homebrew/share/google-cloud-sdk/bin"
+  "/opt/homebrew/share/google-cloud-sdk/bin"
+  "/usr/local/share/google-cloud-sdk/bin"
+  "/usr/share/google-cloud-sdk/bin"
+)
+
+for candidate in $gcloud_sdk_bins; do
+  [[ -x "$candidate/gsutil" ]] || continue
+  path_prepend "$candidate"
+  break
+done
+
+unset gcloud_prefix gcloud_sdk_bins candidate

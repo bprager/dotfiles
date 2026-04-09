@@ -8,11 +8,18 @@
 #
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
-alias ohmyzsh="mate ~/.oh-my-zsh"
+ohmyzsh() {
+  local editor="${VISUAL:-${EDITOR:-vi}}"
+
+  if command -v mate >/dev/null 2>&1; then
+    mate "$HOME/.oh-my-zsh"
+  else
+    "$editor" "$HOME/.oh-my-zsh"
+  fi
+}
 alias cls="clear"
 alias nc="nerdctl"
 alias pm="podman"
 alias isotime="date -u +\"%Y-%m-%dT%H:%M:%SZ\""
 alias isodate="date -u +\"%Y-%m-%d\""
 alias h="history 0"
-alias tf="terraform"

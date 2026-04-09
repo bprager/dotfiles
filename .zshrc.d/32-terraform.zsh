@@ -1,4 +1,4 @@
 # terraform
-if ! terraform_loc="$(type -p "$terraform")" || [[ -z $terraform_loc ]]; then
+if command -v terraform >/dev/null 2>&1; then
   alias tf="terraform"
 fi
