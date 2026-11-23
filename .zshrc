@@ -175,3 +175,11 @@ if [[ -d "$HOME/.sdkman" ]]; then
 fi
 
 export AWS_PAGER=""
+
+# Starship
+eval "$(starship init zsh)"
+
+
+# Added by Antigravity CLI installer
+export PATH="/Users/bernd/.local/bin:$PATH"
+export PATH="/Users/bernd/.local/bin:$PATH"

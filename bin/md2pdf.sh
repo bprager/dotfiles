@@ -403,12 +403,39 @@ if [[ -z "${PYTHON:-}" ]]; then
 fi
 [[ -n "${PYTHON:-}" ]] || die "python3 not found"
 
+# Find a user-local TinyTeX or MacTeX installation when absent from PATH.
+if ! command -v xelatex >/dev/null 2>&1; then
+  for texbin in "$HOME"/Library/TinyTeX/bin/* /Library/TeX/texbin; do
+    if [[ -x "$texbin/xelatex" ]]; then
+      export PATH="$texbin:$PATH"
+      break
+    fi
+  done
+fi
+command -v xelatex >/dev/null 2>&1 || die "XeLaTeX is missing. Install TinyTeX or MacTeX, or add its bin directory to PATH."
+# Missing optional OpenType fonts should use fontspec fallbacks, not trigger
+# METAFONT attempts to generate legacy font metrics.
+export MKTEXTFM=0
+
 # Tools
-need=(pandoc xelatex plantuml)
+need=(pandoc)
 for cmd in "${need[@]}"; do
   command -v "$cmd" >/dev/null 2>&1 || die "'$cmd' not found in PATH"
 done
 
+# Require diagram tools only when the parsed document contains PlantUML blocks.
+HAS_PLANTUML="$(pandoc -f markdown -t json "$INPUT" | "$PYTHON" -c '
+import json, sys
+def contains(node):
+    if isinstance(node, dict):
+        if node.get("t") == "CodeBlock" and "plantuml" in node["c"][0][1]:
+            return True
+        return any(contains(v) for v in node.values())
+    return isinstance(node, list) and any(contains(v) for v in node)
+print(int(contains(json.load(sys.stdin))))
+')"
+if [[ "$HAS_PLANTUML" == "1" ]]; then
+command -v plantuml >/dev/null 2>&1 || die "'plantuml' not found in PATH (required for this document's diagrams)"
 # Pandoc PlantUML filter must exist as an executable, and import should work too
 command -v pandoc-plantuml >/dev/null 2>&1 || die "'pandoc-plantuml' not found in PATH (pip install pandoc-plantuml-filter)"
 "$PYTHON" - <<'PY' >/dev/null 2>&1 || die "pandoc-plantuml-filter not installed for this python (pip install pandoc-plantuml-filter)"
@@ -417,6 +444,7 @@ importlib.import_module("pandoc_plantuml_filter")
 PY
 
 command -v dot >/dev/null 2>&1 || warn "'dot' (Graphviz) not found, some diagrams may render differently"
+fi
 
 # PlantUML behavior
 export PLANTUML_BIN="plantuml -failfast2 -charset UTF-8"
@@ -485,7 +513,7 @@ PY
 INPUT="$SANITIZED_INPUT"
 
 # Resource path
-INPUT_DIR="$(cd -P "$(dirname "$INPUT")" >/dev/null 2>&1 && pwd)"
+INPUT_DIR="$(cd -P "$(dirname "$ORIGINAL_INPUT")" >/dev/null 2>&1 && pwd)"
 RESOURCE_PATH="${INPUT_DIR}:${SCRIPT_DIR}"
 
 LETTERHEAD_DIR=""
@@ -741,7 +769,7 @@ fi
 args+=(--include-in-header="$TMP_OVERRIDES_HEADER")
 
 # Filters, order matters, Lua filter last
-args+=(--filter pandoc-plantuml)
+[[ "$HAS_PLANTUML" == "1" ]] && args+=(--filter pandoc-plantuml)
 [[ -f "$COLOR_LUA" ]] || die "Missing Lua filter: $COLOR_LUA"
 args+=(--lua-filter "$COLOR_LUA")
 args+=(--lua-filter="$LUA_FILTER_EFFECTIVE")
