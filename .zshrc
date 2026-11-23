@@ -176,10 +176,15 @@ fi
 
 export AWS_PAGER=""
 
-# Starship
-eval "$(starship init zsh)"
-
-
 # Added by Antigravity CLI installer
-export PATH="/Users/bernd/.local/bin:$PATH"
-export PATH="/Users/bernd/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+
+# Starship
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi
+
+# OpenClaw completion
+if [[ -r "$HOME/.openclaw/completions/openclaw.zsh" ]]; then
+  source "$HOME/.openclaw/completions/openclaw.zsh"
+fi

@@ -48,6 +48,11 @@ while [[ -L "$SOURCE" ]]; do
 done
 SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
 
+# Prefer project-local tools when invoked from a repo with a Python venv.
+if [[ -d ".venv/bin" ]]; then
+  PATH="$(cd -P ".venv/bin" >/dev/null 2>&1 && pwd):$PATH"
+fi
+
 # Args
 HEADER_ENV_VAR="MD2PDF_HEADER"
 
@@ -326,6 +331,9 @@ if [[ ${#positional[@]} -lt 1 || ${#positional[@]} -gt 2 ]]; then
 fi
 
 INPUT="${positional[0]}"
+if [[ ! -f "$INPUT" && "$INPUT" != */* && -f "Docs/$INPUT" ]]; then
+  INPUT="Docs/$INPUT"
+fi
 [[ -f "$INPUT" ]] || die "File not found: $INPUT"
 [[ "$INPUT" == *.md || "$INPUT" == *.markdown ]] || die "Input must end with .md or .markdown"
 ORIGINAL_INPUT="$INPUT"
